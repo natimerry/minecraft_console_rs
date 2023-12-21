@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MineCraft Console</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .ws_box {
+            height: 200%;
+            width: 100%;
+            border: 5px;
+            border-color: aqua;
+            overflow-y:auto
+        }
+
+        section .signin_increase_size{
+            width: 1000px;
+            max-height: 800px;
+            /* height: 100%; */
+        }
+
+        .console{
+            color: aliceblue;
+            font-family: monospace;
+            font-size: 13pt;
+        }
+        .overflow{
+            overflow-y: auto;
+            max-height: 400px;
+        }
+    </style>
+</head>
+
+
+<body>
+    <section> {% for n in range(end=220) %}
+        <span id="{{n}}"></span>
+        {% endfor %}
+        {% for x in range(end=280) %}
+        <span name="{{x}}"></span>
+        {% endfor %}
+        <div class="signin_increase_size signin">
+            <div class="content">
+                <h2>CONSOLE</h2>
+                <h4 style="color: greenyellow;">Successfully authenticated as {{user}}.</h4>
+                <div class="ws_box">
+                    <div class="form">
+                        <div class="content overflow">
+                            <div class="inputBox overflow">
+                                <p class="console" id="console details"> 
+
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem impedit illum dolorum dignissimos tempora, reprehenderit quasi expedita consectetur animi cumque deserunt, iusto quis delectus itaque ratione fuga eius quos minima! Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam similique perspiciatis facere aspernatur blanditiis tenetur labore libero laudantium quis aperiam dolorum doloribus, quos non voluptates ipsa ratione, ullam rem iusto? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Praesentium corrupti aliquid deleniti? Voluptas at deleniti tenetur praesentium architecto veniam ipsam tempore ipsa cumque nisi porro, officia asperiores cupiditate dolore odio! Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit unde aspernatur, provident culpa commodi dolorum tempora magni est maiores blanditiis optio voluptatem? Voluptatum libero incidunt nobis consectetur nesciunt, eius repudiandae. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eaque, harum ullam aliquid maiores odit, velit vel adipisci maxime doloremque, voluptate optio in repellat. Minus vero dolores maxime ipsa assumenda ducimus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo corporis minus consequuntur! Quidem error aliquam ducimus nam? Quos maiores asperiores aspernatur nisi nemo ab cupiditate modi reprehenderit illum, magni tempora. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias nulla adipisci sint magni, reprehenderit commodi repellendus veniam maxime eligendi architecto ut nobis libero eos quam debitis eum explicabo ipsum placeat!
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem impedit illum dolorum dignissimos tempora, reprehenderit quasi expedita consectetur animi cumque deserunt, iusto quis delectus itaque ratione fuga eius quos minima! Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam similique perspiciatis facere aspernatur blanditiis tenetur labore libero laudantium quis aperiam dolorum doloribus, quos non voluptates ipsa ratione, ullam rem iusto? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Praesentium corrupti aliquid deleniti? Voluptas at deleniti tenetur praesentium architecto veniam ipsam tempore ipsa cumque nisi porro, officia asperiores cupiditate dolore odio! Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit unde aspernatur, provident culpa commodi dolorum tempora magni est maiores blanditiis optio voluptatem? Voluptatum libero incidunt nobis consectetur nesciunt, eius repudiandae. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eaque, harum ullam aliquid maiores odit, velit vel adipisci maxime doloremque, voluptate optio in repellat. Minus vero dolores maxime ipsa assumenda ducimus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo corporis minus consequuntur! Quidem error aliquam ducimus nam? Quos maiores asperiores aspernatur nisi nemo ab cupiditate modi reprehenderit illum, magni tempora. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias nulla adipisci sint magni, reprehenderit commodi repellendus veniam maxime eligendi architecto ut nobis libero eos quam debitis eum explicabo ipsum placeat!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="form">
+                    <div class="inputBox">
+                        <input type="text" name="user_name" id="user_name" required> <i>Enter Commands:</i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section> <!-- partial -->
+
+    <script>
+    </script>
+</body>
+
+</html>

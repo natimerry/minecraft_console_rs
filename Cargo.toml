@@ -1,0 +1,20 @@
+workspace = { members = ["src/password_lib"] }
+[package]
+name = "mc_server_rocket"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rocket = { version = "0.5.0", features = ["json"] }
+sha2 = "0.10.8"
+rocket_ws = "0.1.0"
+
+[dependencies.rocket_dyn_templates]
+version = "0.1.0"
+features = ["tera"]
+
+
+[dependencies.password_lib]
+path = "./src/password_lib"

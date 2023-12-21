@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+     <title>MineCraft Console</title>
+     <link rel="stylesheet" href="/css/style.css"></head>
+
+<body>
+     <section> {% for n in range(end=220) %}
+          <span id="{{n}}"></span>
+          {% endfor %}
+          {% for x in range(end=280) %}
+          <span name="{{x}}"></span>
+          {% endfor %}
+          <div class="signin">
+               <div class="content">
+                    <h2>Console</h2>
+                    <form action="/login" class="form" method="post">
+                         <div class="inputBox">
+                              <input type="text" name="user_name" id="user_name" required> <i>User Name</i>
+                         </div>
+                         <div class="inputBox">
+                              <input type="password" name="password" id="password" required> <i>Password</i>
+                         </div>
+                         <div class="links">
+                         </div>
+                         <div class="inputBox">
+                              <input type="submit" id="submit" value="login">
+                         </div>
+                    </form>
+               </div>
+          </div>
+     </section> <!-- partial -->
+</body>
+
+</html>
