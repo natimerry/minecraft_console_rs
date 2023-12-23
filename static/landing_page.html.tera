@@ -6,6 +6,11 @@
     <title>MineCraft Console</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
+        p {
+            word-break: break-all;
+            white-space: normal;
+        }
+
         .ws_box {
             height: 200%;
             width: 100%;
