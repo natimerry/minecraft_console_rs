@@ -1,11 +1,7 @@
 use rocket::form::Form;
-use rocket::http::hyper::uri;
 use rocket::response::Redirect;
-use rocket::uri;
 use rocket::{self, form::FromForm, get, post};
 use rocket_dyn_templates::{context, Template};
-use sha2::{Digest, Sha512};
-use std::fs;
 use password_lib::*;
 
 #[derive(FromForm)]
@@ -33,7 +29,6 @@ pub fn login_page() -> Template {
 pub async fn login_auth(account: Form<UserFromInput>) -> Result<Template, Redirect> {
     let authentication_result =
         authenticate_with_password(&account.user_name, &account.password).await;
-    let mut hasher = Sha512::new();
 
     match authentication_result {
         Ok(hashed_pass) => {
@@ -47,7 +42,7 @@ pub async fn login_auth(account: Form<UserFromInput>) -> Result<Template, Redire
                 },
             ));
         }
-        Err(e) => {
+        Err(_) => {
             return Err(Redirect::moved("/"));
         }
     }

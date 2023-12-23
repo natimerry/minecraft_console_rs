@@ -1,1 +1,8 @@
 /target
+/mc_paper
+/cache
+*fifo
+*out
+*output
+.vscode
+password_list.txt

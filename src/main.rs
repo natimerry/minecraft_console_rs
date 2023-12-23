@@ -1,19 +1,19 @@
 #![feature(lazy_cell)]
 
-use password_lib;
 mod landing;
 mod login;
 
+
+use crate::landing::*;
 use landing::landing_page;
+use login::{login_auth, login_page};
 use rocket::{
     self,
     fs::{relative, FileServer},
     launch, routes,
 };
 use rocket_dyn_templates::Template;
-
-use login::{login_auth, login_page};
-
+use std::env;
 #[launch]
 fn rocket() -> _ {
     rocket::build()
@@ -22,4 +22,6 @@ fn rocket() -> _ {
         .mount("/", routes![login_page])
         .mount("/", routes![login_auth])
         .mount("/", routes![landing_page])
+        .mount("/", routes![rx_channel])
+        .mount("/", routes![tx_channel])
 }

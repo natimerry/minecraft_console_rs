@@ -11,23 +11,32 @@
             width: 100%;
             border: 5px;
             border-color: aqua;
-            overflow-y:auto
+            overflow-y: auto
         }
 
-        section .signin_increase_size{
+        section .signin_increase_size {
             width: 1000px;
             max-height: 800px;
             /* height: 100%; */
         }
 
-        .console{
+        .console {
             color: aliceblue;
-            font-family: monospace;
+            /* font-family: monospace; */
             font-size: 13pt;
+            white-space: normal;
+            word-wrap: break-word;
+            /* display: inline-block */
         }
-        .overflow{
+
+        .overflow {
             overflow-y: auto;
-            max-height: 400px;
+            max-height: 380px;
+            max-width: 100vw;
+            display: flex;
+            flex-direction: column-reverse;
+            flex-wrap: wrap;
+            justify-content: space-between;
         }
     </style>
 </head>
@@ -35,10 +44,10 @@
 
 <body>
     <section> {% for n in range(end=220) %}
-        <span id="{{n}}"></span>
+        <span id="{{n}}" class="tile"></span>
         {% endfor %}
         {% for x in range(end=280) %}
-        <span name="{{x}}"></span>
+        <span name="{{x}}" class="tile"></span>
         {% endfor %}
         <div class="signin_increase_size signin">
             <div class="content">
@@ -46,12 +55,12 @@
                 <h4 style="color: greenyellow;">Successfully authenticated as {{user}}.</h4>
                 <div class="ws_box">
                     <div class="form">
-                        <div class="content overflow">
-                            <div class="inputBox overflow">
-                                <p class="console" id="console details"> 
+                        <div class="content" id="scroll_div">
+                            <div class="inputBox overflow" id="scroll_div">
 
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem impedit illum dolorum dignissimos tempora, reprehenderit quasi expedita consectetur animi cumque deserunt, iusto quis delectus itaque ratione fuga eius quos minima! Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam similique perspiciatis facere aspernatur blanditiis tenetur labore libero laudantium quis aperiam dolorum doloribus, quos non voluptates ipsa ratione, ullam rem iusto? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Praesentium corrupti aliquid deleniti? Voluptas at deleniti tenetur praesentium architecto veniam ipsam tempore ipsa cumque nisi porro, officia asperiores cupiditate dolore odio! Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit unde aspernatur, provident culpa commodi dolorum tempora magni est maiores blanditiis optio voluptatem? Voluptatum libero incidunt nobis consectetur nesciunt, eius repudiandae. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eaque, harum ullam aliquid maiores odit, velit vel adipisci maxime doloremque, voluptate optio in repellat. Minus vero dolores maxime ipsa assumenda ducimus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo corporis minus consequuntur! Quidem error aliquam ducimus nam? Quos maiores asperiores aspernatur nisi nemo ab cupiditate modi reprehenderit illum, magni tempora. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias nulla adipisci sint magni, reprehenderit commodi repellendus veniam maxime eligendi architecto ut nobis libero eos quam debitis eum explicabo ipsum placeat!
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem impedit illum dolorum dignissimos tempora, reprehenderit quasi expedita consectetur animi cumque deserunt, iusto quis delectus itaque ratione fuga eius quos minima! Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam similique perspiciatis facere aspernatur blanditiis tenetur labore libero laudantium quis aperiam dolorum doloribus, quos non voluptates ipsa ratione, ullam rem iusto? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Praesentium corrupti aliquid deleniti? Voluptas at deleniti tenetur praesentium architecto veniam ipsam tempore ipsa cumque nisi porro, officia asperiores cupiditate dolore odio! Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit unde aspernatur, provident culpa commodi dolorum tempora magni est maiores blanditiis optio voluptatem? Voluptatum libero incidunt nobis consectetur nesciunt, eius repudiandae. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eaque, harum ullam aliquid maiores odit, velit vel adipisci maxime doloremque, voluptate optio in repellat. Minus vero dolores maxime ipsa assumenda ducimus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo corporis minus consequuntur! Quidem error aliquam ducimus nam? Quos maiores asperiores aspernatur nisi nemo ab cupiditate modi reprehenderit illum, magni tempora. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias nulla adipisci sint magni, reprehenderit commodi repellendus veniam maxime eligendi architecto ut nobis libero eos quam debitis eum explicabo ipsum placeat!
+                                <p class="console" id="console">
+
+
                                 </p>
                             </div>
                         </div>
@@ -60,15 +69,92 @@
                 <br>
                 <div class="form">
                     <div class="inputBox">
-                        <input type="text" name="user_name" id="user_name" required> <i>Enter Commands:</i>
+                        <input type="text" id="message" name="message" value="" placeholder="Send a message...">
+                        <i>Enter Commands:</i>
+                        <input type="submit" value="Submit" onclick="sendMessage()">
                     </div>
+                    </dib>
                 </div>
-
             </div>
-        </div>
     </section> <!-- partial -->
-
+    <!-- <script src="css/ansi_up.js" type="module"></script> -->
     <script>
+        javascript: var oReq = new XMLHttpRequest();
+        oReq.open("GET", "https://raw.githubusercontent.com/drudru/ansi_up/master/ansi_up.js", true);
+
+        var send_uri = "ws://127.0.0.1:8000/tx";
+        var receive_uri = "ws://127.0.0.1:8000/rx";
+        var log;
+        // var ansi_up = new AnsiUp();
+        function init() {
+            log = document.getElementById("log");
+            form = document.getElementsByTagName("form")[0];
+            message = document.getElementById("message");
+
+            testWebSocket();
+
+            // form.addEventListener("submit", (e) => {
+            //     e.preventDefault();
+            //     if (message.value !== "") {
+            //         sendMessage(message.value);
+            //         message.value = "";
+            //     }
+            // });
+        }
+
+        function testWebSocket() {
+            websocket = new WebSocket(send_uri);
+            websocket.onopen = onOpen;
+            websocket.onclose = onClose;
+            // websocket.onmessage = onMessage;
+            websocket.onerror = onError;
+
+            websocket2 = new WebSocket(receive_uri);
+            websocket2.onmessage = onMessage;
+        }
+
+        function onOpen(evt) {
+            writeLog("CONNECTED");
+            // sendMessage("Hello, Rocket!");
+        }
+
+        function onClose(evt) {
+            writeLog("Websocket DISCONNECTED");
+        }
+
+        function onMessage(evt) {
+            writeLog(evt.data);
+        }
+
+        function onError(evt) {
+            writeLog(evt.data);
+        }
+
+        function sendMessage() {
+            message = document.getElementById("message").value;
+            console.log(message)
+            websocket.send(message);
+        }
+
+        function writeLog(message) {
+            var pre = document.getElementById("console").innerHTML = message.replaceAll("\n", "<br>");
+
+            // console.log(message);
+            // log.prepend(pre);
+        }
+
+
+        window.addEventListener("load", init, false);
+        window.addEventListener('keyup', function (event) {
+            if (event.keyCode === 13) {
+                sendMessage();
+            }
+        });
+        // while (true){
+        //     setTimeout(function const_rx_query(){
+        //         rx_websocket.send("empty_data");
+        //     },100);
+        // }
     </script>
 </body>
 

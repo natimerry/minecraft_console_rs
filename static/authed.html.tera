@@ -9,10 +9,11 @@
 
 <body>
      <section> {% for n in range(end=210) %}
-          <span id="{{n}}"></span>
+          <span id="{{n}}" class="tile"></span>
           {% endfor %}
           {% for x in range(end=270) %}
-          <span name="{{x}}"></span>
+        <span name="{{x}}" class="tile"></span>
+          
           {% endfor %}
           <div class="signin">
                <div class="content">

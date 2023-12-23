@@ -42,6 +42,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "ansi-to-html"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d73c455ae09fa2223a75114789f30ad605e9e297f79537953523366c05995f5f"
+dependencies = [
+ "regex",
+ "thiserror",
+]
+
+[[package]]
 name = "async-stream"
 version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -439,6 +449,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e13624c2627564efccf4934284bdd98cbaa14e79b0b5a141218e507b3a823456"
 dependencies = [
  "percent-encoding",
+]
+
+[[package]]
+name = "fs-tail"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73c8ee8694b2ad6d79aa976ad8572ca376c0450290041e6e3ae75147356b6ad2"
+dependencies = [
+ "memchr",
 ]
 
 [[package]]
@@ -883,6 +902,9 @@ dependencies = [
 name = "mc_server_rocket"
 version = "0.1.0"
 dependencies = [
+ "ansi-to-html",
+ "fs-tail",
+ "libc",
  "password_lib",
  "rocket",
  "rocket_dyn_templates",

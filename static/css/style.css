@@ -52,7 +52,7 @@ section::before
     transform: translateY(100%);
   }
 }
-section span 
+section .tile 
 {
   position: relative;
   display: block;
@@ -62,7 +62,7 @@ section span
   z-index: 2;
   transition: 1.5s;
 }
-section span:hover 
+section .tile:hover 
 {
   background: #0f0;
   transition: 0s;
@@ -179,7 +179,7 @@ input[type="submit"]:active
 }
 @media (max-width: 900px)
 {
-  section span 
+  section .tile 
   {
     width: calc(10vw - 2px);
     height: calc(10vw - 2px);
@@ -187,7 +187,7 @@ input[type="submit"]:active
 }
 @media (max-width: 600px)
 {
-  section span 
+  section .tile 
   {
     width: calc(20vw - 2px);
     height: calc(20vw - 2px);
