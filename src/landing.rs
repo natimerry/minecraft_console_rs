@@ -106,13 +106,14 @@ pub fn tx_channel(ws: ws::WebSocket) -> ws::Channel<'static> {
                     Err(_) => {
                         println!("Error in sending data");
                         stream.close(None).await?;
+                        break;
                     }
                 }
-
                 // println!("{}", file);
 
                 std::thread::sleep(time::Duration::from_millis(100));
             }
+            Ok(())
         })
     })
 }
