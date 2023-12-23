@@ -5,13 +5,9 @@ use rocket::{
     futures::{SinkExt, StreamExt},
     get, post,
     response::Redirect,
-   
 };
 use rocket_dyn_templates::{context, Template};
-use std::{
-    cell::LazyCell,
-    sync::Mutex,
-};
+use std::{cell::LazyCell, sync::Mutex};
 
 use rocket::form::Form;
 
@@ -73,19 +69,16 @@ pub fn rx_channel(ws: ws::WebSocket) -> ws::Channel<'static> {
                 match message {
                     Ok(_) => {
                         let mut file: std::fs::File = std::fs::OpenOptions::new()
-                        .write(true)
-                        .open("./input_fifo")
-                        .unwrap();
-                        let _ = write!(file,"{}\n", dbg!(message.unwrap()));
-
-                    },
+                            .write(true)
+                            .open("./input_fifo")
+                            .unwrap();
+                        let _ = write!(file, "{}\n", dbg!(message.unwrap()));
+                    }
                     Err(e) => {
                         println!("Error in awaiting next stream message from the WebSocket");
                         println!("[WebSocket] Error: {:?}", e);
                     }
                 }
-
-       
             }
 
             Ok(())
@@ -106,11 +99,14 @@ pub fn tx_channel(ws: ws::WebSocket) -> ws::Channel<'static> {
             loop {
                 let file = rocket::tokio::fs::read_to_string("./server_output").await?;
                 let converted = ansi_to_html::convert(&file).unwrap();
-                
+
                 let x = stream.send(converted.clone().into()).await;
-                match x{
+                match x {
                     Ok(_) => (),
-                    Err(_) => println!("Error in sending data"),
+                    Err(_) => {
+                        println!("Error in sending data");
+                        stream.close(None).await?;
+                    }
                 }
 
                 // println!("{}", file);
