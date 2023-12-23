@@ -24,7 +24,7 @@
 
                          <div class="content">
                               <h3 class="status">
-                                   Welcome, click the button to download the reverse engineering challenge
+                                   Welcome {{user_name}}, click the button to enter the console.
                               </h3>
                               
                          </div>
