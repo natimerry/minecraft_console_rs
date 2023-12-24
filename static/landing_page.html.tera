@@ -142,7 +142,7 @@
         }
 
         function writeLog(message) {
-            var pre = document.getElementById("console").innerHTML = message.replaceAll("\n", "<br>");
+            var pre = document.getElementById("console").innerHTML += message.replaceAll("\n", "<br>");
 
             // console.log(message);
             // log.prepend(pre);

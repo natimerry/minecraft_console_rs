@@ -3,8 +3,10 @@ use password_lib::generate_sha512_string;
 use rocket::{
     form::FromForm,
     futures::{SinkExt, StreamExt},
-    get, post,
+    get,
+    post,
     response::Redirect,
+    tokio::io::{AsyncBufReadExt, BufReader},
 };
 use rocket_dyn_templates::{context, Template};
 use std::{cell::LazyCell, sync::Mutex};
@@ -96,19 +98,39 @@ pub fn tx_channel(ws: ws::WebSocket) -> ws::Channel<'static> {
 
     ws.channel(move |mut stream| {
         Box::pin(async move {
+            let mut last_count: usize = 0;
             loop {
-                let file = rocket::tokio::fs::read_to_string("./server_output").await?;
-                let converted = ansi_to_html::convert(&file).unwrap();
+                let reader =
+                    BufReader::new(rocket::tokio::fs::File::open("./server_output").await?);
 
-                let x = stream.send(converted.clone().into()).await;
-                match x {
-                    Ok(_) => (),
-                    Err(_) => {
-                        println!("Error in sending data");
-                        stream.close(None).await?;
-                        break;
+                let mut lines = reader.lines();
+                let mut c: usize = 0;
+
+                let mut last_lines = String::new();
+                while let Some(line) = lines.next_line().await? {
+                    if c > last_count {
+                        last_lines = format!("{}\n{}", last_lines, line);
+                    }
+                    c += 1;
+                }
+
+                last_count = c;
+                if !last_lines.is_empty() {
+                    println!("Pushing {}", last_lines);
+
+                    let converted = ansi_to_html::convert(&last_lines).unwrap();
+
+                    let x = stream.send(converted.clone().into()).await;
+                    match x {
+                        Ok(_) => (),
+                        Err(_) => {
+                            println!("Error in sending data");
+                            stream.close(None).await?;
+                            break;
+                        }
                     }
                 }
+
                 // println!("{}", file);
 
                 std::thread::sleep(time::Duration::from_millis(100));
