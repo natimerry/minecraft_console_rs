@@ -108,7 +108,7 @@ pub fn tx_channel(ws: ws::WebSocket) -> ws::Channel<'static> {
 
                 let mut last_lines = String::new();
                 while let Some(line) = lines.next_line().await? {
-                    if c > last_count {
+                    if c >= last_count {
                         last_lines = format!("{}\n{}", last_lines, line);
                     }
                     c += 1;

@@ -137,7 +137,8 @@
 
         function sendMessage() {
             message = document.getElementById("message").value;
-            console.log(message)
+            console.log(message);
+            writeLog("<br>SENT: " + message + "<br>");
             websocket.send(message);
         }
 
