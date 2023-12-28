@@ -1,16 +1,14 @@
+use password_lib::*;
 use rocket::form::Form;
 use rocket::response::Redirect;
 use rocket::{self, form::FromForm, get, post};
 use rocket_dyn_templates::{context, Template};
-use password_lib::*;
 
 #[derive(FromForm)]
 struct UserFromInput {
     user_name: String,
     password: String,
 }
-
-
 
 /// WEB PAGES
 
@@ -22,6 +20,11 @@ pub fn login_page() -> Template {
             field: "Hello",
         },
     )
+}
+
+#[get("/register")]
+pub async fn register() -> Template {
+    Template::render("registered", context! {})
 }
 
 #[allow(private_interfaces)]
@@ -42,7 +45,15 @@ pub async fn login_auth(account: Form<UserFromInput>) -> Result<Template, Redire
                 },
             ));
         }
-        Err(_) => {
+        Err(e) => {
+            match e {
+                Errors::PasswordFailure => (),
+                Errors::NoSuchUser => {
+                    password_lib::add_user(&account.user_name, &account.password).await.unwrap();
+                    return Err(Redirect::moved("/register"));
+                },
+                _ => (),
+            }
             return Err(Redirect::moved("/"));
         }
     }

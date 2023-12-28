@@ -1,51 +1,95 @@
-use std::fs;
+use std::{
+    collections::{HashMap, HashSet},
+    io::Write,
+};
 
-use sha2::{Digest,Sha512};
+use sha2::{Digest, Sha512};
 
-
-pub fn generate_sha512_string(string:String) -> String{
+pub fn generate_sha512_string(string: String) -> String {
     let mut hasher = Sha512::new();
     hasher.update(string.as_bytes());
     let result = hasher.clone().finalize();
-    format!("{:x}",result) 
+    format!("{:x}", result)
 }
+
 
 #[derive(Debug)]
 pub enum Errors {
     PasswordFailure,
     NoSuchUser,
     BadRequest,
-    InternalServerError,
+    InternalServerError(String),
+}
+impl std::error::Error for Errors {}
+impl std::fmt::Display for Errors {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+impl From<std::io::Error> for Errors {
+    fn from(value: std::io::Error) -> Self {
+        Errors::InternalServerError(format!("{}", value))
+    }
+}
+
+pub async fn add_user(user: &str, hash: &str) -> Result<(), Errors> {
+    let mut file: std::fs::File = std::fs::OpenOptions::new()
+        .append(true)
+        .create(true)
+        .open("./password_list.txt")?;
+    writeln!(
+        file,
+        "// {}:{}",
+        user,
+        generate_sha512_string(hash.to_string())
+    )?;
+    Ok(())
+}
+
+async fn get_user_pass_map() -> Result<HashMap<String, String>, Errors> {
+    Ok(std::fs::read_to_string("password_list.txt")?
+        .lines()
+        .map(|line| {
+            let entry = line
+                .split_once(':')
+                .expect("Infallible state reached. Cant split db entry");
+            (entry.0.to_string(), entry.1.to_string())
+        })
+        .collect::<HashMap<String, String>>())
 }
 
 pub async fn authenticate_with_password(user: &str, pass: &str) -> Result<String, Errors> {
-    let mut hasher = Sha512::new();
-    let password_data = fs::read_to_string("./password_list.txt");
+    let password_hash = generate_sha512_string(pass.to_string());
 
-    match password_data {
-        Err(_) => return Err(Errors::InternalServerError),
-        _ => (),
+    let user_names = get_user_pass_map().await;
+    if let Err(e) = user_names {
+        return Err(e);
     }
+    let user_names = user_names.unwrap();
 
-    let binding = password_data.unwrap();
-    let lines = binding.lines();
-
-    for line in lines {
-        if let Some((file_user, stored_pass)) = line.split_once(':') {
-            hasher.update(pass.as_bytes());
-            let result = hasher.clone().finalize();
-            let hashed_pass = format!("{:x}", result);
-
-            if file_user == user && stored_pass == hashed_pass {
-                return Ok(hashed_pass);
-            } else if file_user == user && stored_pass != hashed_pass {
-                return Err(Errors::PasswordFailure);
+    match user_names.get(user) {
+        Some(password) => {
+            if *password == password_hash {
+                Ok(password_hash)
+            } else {
+                Err(Errors::PasswordFailure)
             }
         }
+        None => Err(Errors::NoSuchUser),
     }
-    return Err(Errors::NoSuchUser);
 }
 
-// async fn check_if_authed(key:String) -> {
-    
-// }
+pub async fn list_of_users() -> Result<HashSet<String>, Errors> {
+    Ok(std::fs::read_to_string("password_list.txt")?
+        .lines()
+        .filter(|line| !line.starts_with("//"))
+        .map(|line| {
+            if let Some((user, pass)) = line.split_once(":") {
+                let user_pass = dbg!(format!("{}+mc+{}", user, pass));
+                generate_sha512_string(user_pass)
+            } else {
+                panic!("UNABLE TO LAZILY EVALUATE LIST OF USERS");
+            }
+        })
+        .collect::<HashSet<String>>())
+}

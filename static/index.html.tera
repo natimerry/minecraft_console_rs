@@ -26,7 +26,7 @@
                          <div class="links">
                          </div>
                          <div class="inputBox">
-                              <input type="submit" id="submit" value="login">
+                              <input type="submit" name="regid="submit" value="login">
                          </div>
                     </form>
                </div>

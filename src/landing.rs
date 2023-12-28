@@ -1,33 +1,16 @@
 use core::time;
-use password_lib::generate_sha512_string;
 use rocket::{
     form::FromForm,
     futures::{SinkExt, StreamExt},
-    get,
-    post,
+    get, post,
     response::Redirect,
     tokio::io::{AsyncBufReadExt, BufReader},
 };
 use rocket_dyn_templates::{context, Template};
-use std::{cell::LazyCell, sync::Mutex};
 
 use rocket::form::Form;
 
 use std::io::Write;
-static LIST_OF_USERS: Mutex<LazyCell<Vec<String>>> = Mutex::new(LazyCell::new(|| {
-    std::fs::read_to_string("password_list.txt")
-        .unwrap()
-        .lines()
-        .map(|line| {
-            if let Some((user, pass)) = line.split_once(":") {
-                let user_pass = dbg!(format!("{}+mc+{}", user, pass));
-                generate_sha512_string(user_pass)
-            } else {
-                panic!("UNABLE TO LAZILY EVALUATE LIST OF USERS");
-            }
-        })
-        .collect()
-}));
 
 #[derive(FromForm, Debug)]
 struct AuthedUser {
@@ -35,21 +18,27 @@ struct AuthedUser {
     key: String,
 }
 
+
+
 #[allow(private_interfaces)]
 #[post("/landing", data = "<authed_user>")]
-pub fn landing_page(authed_user: Form<AuthedUser>) -> Result<Template, Redirect> {
-    let mut flag = false;
-    LIST_OF_USERS.lock().unwrap().iter().for_each(|user| {
-        if user == &authed_user.key {
-            flag = true;
-        }
-    });
-    if flag {
+pub async fn landing_page(authed_user: Form<AuthedUser>) -> Result<Template, Redirect> {
+    // let mut flag = false;
+    // LIST_OF_USERS.lock().unwrap().iter().for_each(|user| {
+    //     if user == &authed_user.key {
+    //         flag = true;
+    //     }
+    // });
+
+    let user_list = password_lib::list_of_users().await.unwrap();
+
+    if user_list.contains(&authed_user.key) {
         return Ok(Template::render(
             "landing_page",
             context! {user:authed_user.user_name.clone()},
         ));
     }
+
     Err(Redirect::moved("/"))
 }
 
@@ -74,7 +63,7 @@ pub fn rx_channel(ws: ws::WebSocket) -> ws::Channel<'static> {
                             .write(true)
                             .open("./input_fifo")
                             .unwrap();
-                        let _ = write!(file, "{}\n", dbg!(message.unwrap()));
+                        let _ = writeln!(file, "{}", dbg!(message.unwrap()));
                     }
                     Err(e) => {
                         println!("Error in awaiting next stream message from the WebSocket");

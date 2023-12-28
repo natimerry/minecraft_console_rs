@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+     <title>Minecraft Console</title>
+     <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+     <section> {% for n in range(end=210) %}
+          <span id="{{n}}" class="tile"></span>
+          {% endfor %}
+          {% for x in range(end=270) %}
+        <span name="{{x}}" class="tile"></span>
+          
+          {% endfor %}
+          <div class="signin">
+               <div class="content">
+                    <h2>WELCOME</h2>
+                    <form action="/" class="form" method="get">
+                         <div class="content">
+                              <h3 class="status">
+                                   Your username as been added to our DB. You can login once approved.
+                              </h3>
+                         </div>
+                         <div class="links">
+                         </div>
+                         <div class = ".signin">
+                            <div class="inputBox">
+                                <input type="submit" id="submit" value="Lets go!">
+                           </div>
+                         </div>
+                         
+                    </form>
+               </div>
+          </div>
+     </section> <!-- partial -->
+
+     <script>
+     </script>
+</body>
+
+</html>
